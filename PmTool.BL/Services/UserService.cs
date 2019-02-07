@@ -20,11 +20,11 @@ namespace PmTool.BL.Services
             this.dbContext = new ProjectManagementEntities();
             this.unitOfWork = new UnitOfWork(dbContext);
         }
-        public Labs GetUserBydId(int userId)
+        public Users GetUserBydId(int userId)
         {
             try
             {
-                return unitOfWork.Repository<Labs>().GetById(userId);
+                return unitOfWork.Repository<Users>().GetById(userId);
             }
             catch (Exception ex)
             {
@@ -33,25 +33,11 @@ namespace PmTool.BL.Services
             }
         }
 
-        public void AddLaboratoryProject(Labs laboratory)
+        public void AddUser(Users user)
         {
             try
             {
-                unitOfWork.Repository<Labs>().Add(laboratory);
-
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
-
-        public void UpdateLaboratoryProject(Labs laboratory)
-        {
-            try
-            {
-                unitOfWork.Repository<Labs>().Update(laboratory);
+                unitOfWork.Repository<Users>().Add(user);
 
             }
             catch (Exception ex)
@@ -61,11 +47,11 @@ namespace PmTool.BL.Services
             }
         }
 
-        public void DeleteLaboratoryProject(Labs laboratory)
+        public void UpdateUser(Users user)
         {
             try
             {
-                unitOfWork.Repository<Labs>().Delete(laboratory);
+                unitOfWork.Repository<Users>().Update(user);
 
             }
             catch (Exception ex)
@@ -75,12 +61,12 @@ namespace PmTool.BL.Services
             }
         }
 
-        public List<Labs> ListLaboratoryProjects()
+        public void DisableUser(int userId)
         {
             try
             {
-                List<Labs> theListLaboratoryProjects = unitOfWork.Repository<Labs>().GetAll().ToList();
-                return theListLaboratoryProjects;
+                Users theUserToSearch = unitOfWork.Repository<Users>().GetById(userId);
+                unitOfWork.Repository<Users>().Update(theUserToSearch);
             }
             catch (Exception ex)
             {
@@ -89,12 +75,12 @@ namespace PmTool.BL.Services
             }
         }
 
-        public List<Labs> ListLaboratoryProjectsByAssinedPm(int userId)
+        public void DeleteUser(Users user)
         {
             try
             {
-                List<Labs> theListLaboratoryProjectsByAssinedPm = unitOfWork.Repository<Labs>().FindAll(x => x.Assigned_pm == userId).ToList();
-                return theListLaboratoryProjectsByAssinedPm;
+                unitOfWork.Repository<Users>().Delete(user);
+
             }
             catch (Exception ex)
             {
@@ -103,18 +89,33 @@ namespace PmTool.BL.Services
             }
         }
 
-        public List<Labs> ListLaboratoryProjectsByRequestorId(int userId)
+        public List<Users> ListUsers()
         {
             try
             {
-                List<Labs> theListLaboratoryProjectsByRequestorId = unitOfWork.Repository<Labs>().FindAll(x => x.Lab_requestor_id == userId).ToList();
-                return theListLaboratoryProjectsByRequestorId;
+                List<Users> theUserList = unitOfWork.Repository<Users>().GetAll().ToList();
+                return theUserList;
             }
             catch (Exception ex)
             {
 
                 throw ex;
             }
+        } 
+        public bool UserLogin(int userId, string userPassword)
+        {
+            Users userToSearch = unitOfWork.Repository<Users>().FindSingle(x=>x.User_id== userId && x.User_password==userPassword);
+            if (userToSearch != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
+
+
+
     }
 }
